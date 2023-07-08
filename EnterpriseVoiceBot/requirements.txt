@@ -1,0 +1,5 @@
+Flask
+boto3>=1.26.159
+langchain
+python-dotenv
+urllib

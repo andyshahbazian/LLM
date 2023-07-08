@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Knowledge Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Corporate Knowledge Bot</h1>
+        <div class="info-container">
+            <h2>Retrieval Augmented Generation (RAG) Chatbot</h2>
+            <ul>
+                <li>User query is first routed to trusted a data source (in this case, Amazon Kendra)</li>
+                <li>Highest matching docs/data returned are used as context for LLM prompt</li>
+                <li>User query + trusted data (as context) are passed to Sagemaker Endpoint hosting LLM for processing</li>
+                <li>LLM response returned to UI</li>
+            </ul>
+        </div>
+        <div class="tabs">
+            <div class="tab-container">
+                <button class="tab-button active" onclick="switchTab('internal-data')">Internal Data Bot</button>
+                <button class="tab-button" onclick="switchTab('general-assistant')">General Assistant</button>
+            </div>
+            <div class="chat-container" id="internal-data-container">
+                <div class="chatbox" id="response-container-internal-data"></div>
+            </div>
+            <div class="chat-container" id="general-assistant-container" style="display:none;">
+                <div class="chatbox" id="response-container-general-assistant"></div>
+            </div>
+            <form id="chatbot-form" autocomplete="off" action="/internal-data">
+                <input type="text" id="user_input" name="user_input" placeholder="Ask a question..." required>
+                <input type="hidden" id="input_type" name="input_type" value="text">
+                <button type="submit">Submit</button>
+                <button type="button" id="voice_input_button">Voice Input</button>
+            </form>
+        </div>
+    </div>
+    <div class="animation-container">
+        <iframe src="https://embed.lottiefiles.com/animation/58728"></iframe>
+    </div>
+    <script>
+        async function submitInternalDataQuestion() {
+            const userInput = document.getElementById("user_input").value;
+            const responseContainer = document.getElementById("response-container-internal-data"); 
+
+            const userMessage = document.createElement("div");
+            userMessage.className = "message";
+            userMessage.innerHTML = `<span class="human"><strong>User:</strong></span> ${userInput}`;
+            responseContainer.appendChild(userMessage);
+
+            const processingMessage = document.createElement("div");
+            processingMessage.className = "message";
+            processingMessage.id = `processing-${Date.now()}`;
+            processingMessage.innerText = "Processing...";
+            processingMessage.style = "white-space: pre-wrap"
+            responseContainer.appendChild(processingMessage);
+
+            const response = await fetch("/", {
+                method: "POST",
+                body: new FormData(document.getElementById("chatbot-form")),
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+            const jsonResponse = await response.json();
+            processingMessage.innerHTML = `<span class="ai">AI:</span> ${jsonResponse.response}`;
+            
+             // Update the scrollbar to scroll to the bottom of the chat
+             responseContainer.scrollTop = responseContainer.scrollHeight - responseContainer.clientHeight;
+            document.getElementById("user_input").value = "";
+            }
+
+        async function submitGeneralAssistantQuestion() {
+            const userInput = document.getElementById("user_input").value;
+            const responseContainer = document.getElementById("response-container-general-assistant");
+
+            const userMessage = document.createElement("div");
+            userMessage.className = "message";
+            userMessage.innerHTML = `<span class="human"><strong>User:</strong></span> ${userInput}`;
+            responseContainer.appendChild(userMessage);
+
+            const processingMessage = document.createElement("div");
+            processingMessage.className = "message";
+            processingMessage.id = `processing-${Date.now()}`;
+            processingMessage.innerText = "Processing...";
+            processingMessage.style = "white-space: pre-wrap"
+            responseContainer.appendChild(processingMessage);
+
+            const response = await fetch("/general_assistant", {
+                method: "POST",
+                body: new FormData(document.getElementById("chatbot-form")),
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+            const jsonResponse = await response.json();
+            processingMessage.innerHTML = `<span class="ai">AI:</span> ${jsonResponse.response}`;
+
+            // Update the scrollbar to scroll to the bottom of the chat
+            responseContainer.scrollTop = responseContainer.scrollHeight - responseContainer.clientHeight;
+
+            document.getElementById("user_input").value = "";
+        }
+
+        function switchTab(tab) {
+            const tabButtons = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+            if (tab === 'general-assistant') {
+                submitQuestion = submitGeneralAssistantQuestion;
+                document.getElementById('internal-data-container').style.display = 'none';
+                document.getElementById('general-assistant-container').style.display = 'block';
+            } else {
+                submitQuestion = submitInternalDataQuestion;
+                document.getElementById('internal-data-container').style.display = 'block';
+                document.getElementById('general-assistant-container').style.display = 'none';
+            }
+            event.target.classList.add("active");
+        }
+
+        document.getElementById("chatbot-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            submitQuestion();
+        });
+
+        document.getElementById("voice_input_button").addEventListener("click", async () => {
+            document.getElementById("input_type").value = "voice";
+            submitQuestion();
+        });
+
+        let submitQuestion = submitInternalDataQuestion;
+    </script>
+</body>
+</html>
