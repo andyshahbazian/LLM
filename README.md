@@ -27,6 +27,94 @@ Mock 'AnyCompany' data zip - https://amazon.awsapps.com/workdocs/index.html#/doc
 
    playwright install
    ```
+if you faced error installing it follwo below steps : 
+```
+sudo apt update
+```
+Step 2: Install Python and pip
+Check if Python is already installed by running the command:
+```
+python3 --version
+
+```
+If Python is not installed, run the following command to install it:
+
+```
+sudo apt install python3
+```
+Check if pip is installed by running the command:
+```
+pip3 --version
+```
+If pip is not installed, run the following command to install it:
+
+```
+sudo apt install python3-pip
+
+```
+
+Step 3: Install Dependencies
+Scrapy-Playwright requires some additional dependencies. Run the following command to install them:
+
+```
+sudo apt install -y curl unzip xvfb libxi6 libgconf-2-4
+```
+
+Step 4: Install Playwright
+Run the following command to install Playwright:
+
+```
+pip3 install playwright
+```
+
+Step 5: Install Browser Dependencies
+Scrapy-Playwright supports multiple browsers. You can choose the one you prefer. To install Chromium, run the following command:
+
+```
+playwright install chromium
+```
+Step 6: Install Scrapy-Playwright
+Finally, install Scrapy-Playwright using pip:
+```
+pip3 install scrapy-playwright
+```
+That's it! Scrapy-Playwright should now be successfully installed on your Ubuntu system. You can verify the installation by running the command:
+
+```
+scrapy-playwright --version
+```
+If you get playwright: command not found error: 
+If you encounter the "playwright: command not found" error after installing Scrapy-Playwright on Ubuntu, it might be due to the Playwright command-line interface (CLI) not being added to your system's PATH variable. Here's a possible solution:
+
+Verify the Playwright installation:
+Run the following command to check if Playwright is installed correctly:
+```
+pip3 show playwright
+```
+Ensure that the package details are displayed, confirming that Playwright is installed.
+
+Add Playwright to the PATH variable:
+Open your shell profile file (e.g., ~/.bashrc or ~/.bash_profile) in a text editor:
+
+```
+nano ~/.bashrc
+```
+Add the following line at the end of the file:
+```
+export PATH=$PATH:~/.local/bin
+```
+Save the file and exit the text editor.
+
+Update the PATH variable:
+Run the following command to update the PATH variable in your current shell session:
+```
+source ~/.bashrc
+
+playwright --version
+```
+make sure you run this : 
+```
+git clone 
 
 3. Update the URL on line 13 and 15 of scrapy/kb/kb/spiders/knowledge_base.py to be your companies parent knowledge base index URL. Something like this for line 14 https://docs.aws.amazon.com/index.html where downstream links are aggregated and this for line 13 docs.aws.amazon.com.
 
