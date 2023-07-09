@@ -1,6 +1,6 @@
-# Corporate RAG Assistant
+# Retrieval-Augmented Generation (RAG) with Kendra and Sagemaker using AI21 (jurassic) 
 
-Welcome to the Corporate RAG Assistant, a chatbot built in Python/Flask that uses Amazon Kendra, Langchain, and a large language model (AI21 Jurassic-2 Grande Instruct) hosted on SageMaker to answer questions by providing trusted sources in combination with a user's prompt to a generative language model.
+I wanted to experiment with building  a chatbot in Python that uses AWS Kendra, Langchain, and a large language model (AI21 Jurassic-2 Grande Instruct) hosted on SageMaker to answer questions by providing trusted sources in combination with a user's prompt to a generative language model.
 
 The bot has two modes, 'Internal Data Bot' which uses RAG orchestration to gather trusted data, and a 'General Assistant' which simply routes users questions directly to the LLM, bypassing the RAG orchestrator. The inclusion of these two interfaces are intended to demonstrate an internal/trusted knowledge search alongside a general purpose productivity assistant functionality (ex: help write this email), all within the same infrastructure.
 
